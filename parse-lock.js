@@ -232,12 +232,12 @@ function extractDependencies(deps, collected = {}) {
 const allDeps = extractDependencies(data.packages || {});
 const matched = [];
 
-for (const [pkg, _affectedVersions] of Object.entries(filters)) {
-  const foundPackages = Object.keys(allDeps).filter(v => v.includes(pkg));
+for (const [affectedPkg, affectedVersions] of Object.entries(filters)) {
+  const foundPackages = Object.entries(allDeps).filter(v => v[0].includes(affectedPkg));
   if(foundPackages.length > 0) {
-    foundPackages.forEach(element => {
-      matched.push(`${element}`);
-    });
+    for (const [pkg, version] of foundPackages) {
+      matched.push(`${pkg}@${version} - affected versions: ${affectedVersions}`);
+    }
   }
 }
 

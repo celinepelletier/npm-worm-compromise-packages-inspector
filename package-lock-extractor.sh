@@ -14,13 +14,25 @@ echo "📦 Scanning all repositories in '$ORG' for package-lock.json files..."
 repos=$(gh repo list "$ORG" --limit 1000 --json nameWithOwner --jq '.[].nameWithOwner')
 
 for repo in $repos; do
-  # Obtenir la branche par défaut
+  # echo "Scanning $repo"
+
+  # Get default branch
   default_branch=$(gh api "repos/$repo" --jq '.default_branch')
+
+  if [ "$default_branch" = "null" ] || [ -z "$default_branch" ]; then
+    continue # Empty repo
+  else
+    # Check if there are files on the repo
+    FILES=$(gh api repos/$repo/contents --silent 2> /dev/null)
+    if [ $? -ne 0 ]; then
+      continue # Empty repo
+    fi
+  fi
 
   # Récupérer l’arborescence complète
   tree=$(gh api "repos/$repo/git/trees/$default_branch?recursive=1")
 
-  # Extraire tous les chemins des package-lock.json
+  # Get paths to package-lock.json
   paths=$(echo "$tree" | jq -r '.tree[] | select(.path | endswith("package-lock.json")) | .path')
 
   if [ -z "$paths" ]; then
@@ -28,9 +40,9 @@ for repo in $repos; do
   fi
 
   for path in $paths; do
-    echo "$repo Found: $path"
+    # echo "$repo Found: $path"
 
-    # Télécharger le fichier brut
+    # Download the file
     download_url=$(gh api "repos/$repo/contents/$path?ref=$default_branch" --jq '.download_url')
     
     if [ -n "$download_url" ]; then
