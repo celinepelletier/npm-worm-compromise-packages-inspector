@@ -199,6 +199,12 @@ const rawInput = `
 193	wdio-web-reporter	0.1.3
 194	yargs-help-output	5.0.3
 195	yoo-styles	6.0.326
+196	@basic-ui-components-stc/basic-ui-components	0.0.0
+197	@ui-ux-gang/devextreme-rpk	0.0.0
+198	ace-colorpicker-rpk	0.0.0
+199	another-shai	0.0.0
+200	devextreme-rpk	0.0.0
+201	ng-imports-checker	0.0.0
 `;
 
 const filters = {};
